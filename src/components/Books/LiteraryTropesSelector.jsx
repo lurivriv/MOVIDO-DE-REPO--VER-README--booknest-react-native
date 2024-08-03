@@ -3,18 +3,18 @@ import { StyleSheet, View, ScrollView, Text } from "react-native"
 import Toast from "react-native-toast-message"
 import { FontAwesome6 , AntDesign } from "@expo/vector-icons"
 import { colors } from "../../global/colors.js"
-import { useGetLiteraryTropesQuery } from "../../services/booksServices.js"
+import { useGetLiteraryTropesQuery } from "../../services/bookService.js"
 import { CustomButton } from "../CustomButton.jsx"
 import { TropesModal } from "./TropesModal.jsx"
 
 export const LiteraryTropesSelector = ({ selectedTropes, setSelectedTropes }) => {
   const [isModalVisible, setIsModalVisible] = useState(false)
-  
   const { data: literaryTropes = [] } = useGetLiteraryTropesQuery()
 
   const handleDeleteTropeSelection = (trope) => {
     const updatedTropes = selectedTropes.filter(t => t !== trope)
     setSelectedTropes(updatedTropes)
+    
     Toast.show({
       type: "info",
       text1: `" ${trope} "  ha sido eliminado`,

@@ -1,7 +1,7 @@
 import { StyleSheet, View, ScrollView, Text, TouchableOpacity } from "react-native"
 import { colors } from "../../global/colors.js"
 
-export const ReadingFormatSelector = ({ readingFormats, selectedReadingFormat, onSelect }) => {
+export const ReadingFormatSelector = ({ readingFormats, selectedReadingFormat, onSelect, error = "" }) => {
   return (
     <View style={styles.formatContainer}>
       <Text style={styles.subtitle}>Formato</Text>
@@ -21,6 +21,7 @@ export const ReadingFormatSelector = ({ readingFormats, selectedReadingFormat, o
           </TouchableOpacity>
         ))}
       </ScrollView>
+      {error ? <Text style={styles.error}>{error}</Text> : null}
     </View>
   )
 }
@@ -64,5 +65,13 @@ const styles = StyleSheet.create({
   },
   selectedFormatBtnText: {
     color: colors.black
+  },
+  error: {
+    fontFamily: "Roboto-regular-italic",
+    fontSize: 15,
+    marginTop: -6,
+    marginBottom: 16,
+    color: colors.red,
+    textAlign: "center"
   }
 })

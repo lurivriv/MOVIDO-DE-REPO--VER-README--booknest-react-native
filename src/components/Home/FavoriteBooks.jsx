@@ -1,9 +1,9 @@
 import { StyleSheet, View } from "react-native"
-import { useGetBooksQuery } from "../../services/booksServices.js"
+import { useGetBooksByUserQuery } from "../../services/bookService.js"
 import { ScrollHorizontalBooksList } from "./ScrollHorizontalBooksList.jsx"
 
-export const FavoriteBooks = ({ navigation }) => {
-  const { data: books = [] } = useGetBooksQuery()
+export const FavoriteBooks = ({ navigation, style }) => {
+  const { data: books = [] } = useGetBooksByUserQuery("lu@gmail.com")
 
   const maxRating = Math.max(...books.map(book => book.starRating || 0), 0)
   const filterFavoriteBooks = books.filter(book => book.starRating === maxRating)
@@ -13,7 +13,7 @@ export const FavoriteBooks = ({ navigation }) => {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]}>
       <ScrollHorizontalBooksList
         title="Tus favoritos"
         data={filterFavoriteBooks}

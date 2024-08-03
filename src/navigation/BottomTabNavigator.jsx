@@ -18,7 +18,7 @@ export const BottomTabNavigator = () => {
       }}
     >
       <Tab.Screen
-        name="Home"
+        name="HomeBtn"
         component={HomeStackNavigator}
         options={{
           tabBarLabel: ({ focused }) => <Text style={focused ? styles.tabBarLabelActive : styles.tabBarLabelInactive}>Inicio</Text>,
@@ -32,7 +32,7 @@ export const BottomTabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="Books"
+        name="BooksBtn"
         component={BooksStackNavigator}
         options={{
           tabBarLabel: ({ focused }) => <Text style={focused ? styles.tabBarLabelActive : styles.tabBarLabelInactive}>Libros</Text>,
@@ -46,7 +46,7 @@ export const BottomTabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="Profile"
+        name="ProfileBtn"
         component={ProfileStackNavigator}
         options={{
           tabBarLabel: ({ focused }) => <Text style={focused ? styles.tabBarLabelActive : styles.tabBarLabelInactive}>Perfil</Text>,

@@ -10,24 +10,22 @@ import { HorizontalListData } from "./View/HorizontalListData.jsx"
 import { VerticalListData } from "./View/VerticalListData.jsx"
 import { TextAreaView } from "./View/TextAreaView.jsx"
 
-export const BookInfo = ({ book, onEdit, onDelete }) => {
-  const image = require("../../../assets/books/defaultImg.jpg")
-
+export const BookInfo = ({ book, bookId, onEdit, onDelete }) => {
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.imgContainer}>
-        <BookImg source={image} backgroundSource={image} style={styles.imgContainer} />
+        <BookImg bookId={bookId} style={styles.imgContainer} />
         <View style={styles.editDeleteContainer}>
           <CustomButton
             onPress={onDelete}
             icon={<AntDesign name="delete" size={24} color={colors.red} />}
-            style={[styles.editDeleteBtn, styles.deleteBtn]}
+            style={styles.deleteBtn}
             styleContainer={styles.editDeleteBtnContainer}
           />
           <CustomButton
             onPress={onEdit}
-            icon={<AntDesign name="edit" size={24} color={colors.skyBlue} />}
-            style={[styles.editDeleteBtn, styles.editBtn]}
+            icon={<AntDesign name="edit" size={24} color={colors.black} />}
+            style={styles.editBtn}
             styleContainer={styles.editDeleteBtnContainer}
           />
         </View>
@@ -46,50 +44,66 @@ export const BookInfo = ({ book, onEdit, onDelete }) => {
         items={book.genres}
         renderItem={(genre) => genre}
       />
-      <View style={styles.rowContainer}>
-        <SingleDataView value={book.chapters} text="capítulos" />
-        <SingleDataView value={book.pages} text="páginas" />
-      </View>
-      <VerticalListData
-        title="Tropes"
-        items={book.literaryTropes}
-        icon="check-circle"
-      />
-      <RatingView type="emotion" rating={book.emotionRating} style={styles.ratingView} styleIcon={styles.ratingEmotionIcon} />
-      <HorizontalListData
-        title="Personajes favoritos"
-        items={book.characters}
-        renderItem={(character) => character}
-      />
-      <View style={styles.rowContainer}>
-        <CustomButton
-          title="Spotify"
-          onPress={() => Linking.openURL(book?.spotifyLink)}
-          icon={<FontAwesome5 name="spotify" size={22} color={colors.black} />}
-          style={[styles.link, styles.linkSpotify]}
-          styleContainer={styles.linkContainer}
-          styleText={styles.linkText}
-        />
-        <View style={styles.linkIcon}>
-          <AntDesign name="link" size={22} color={colors.white} />
+      {(book.chapters || book.pages) &&
+        <View style={styles.rowContainer}>
+          <SingleDataView value={book.chapters && book.chapters} text={book.chapters ? "capítulos" : "Sin especificar"} />
+          <SingleDataView value={book.pages && book.pages} text={book.pages ? "páginas" : "Sin especificar"} />
         </View>
-        <CustomButton
-          title="Pinterest"
-          onPress={() => Linking.openURL(book?.pinterestLink)}
-          icon={<FontAwesome5 name="pinterest" size={22} color={colors.black} />}
-          style={[styles.link, styles.linkPinterest]}
-          styleContainer={styles.linkContainer}
-          styleText={styles.linkText}
+      }
+      {book.literaryTropes && 
+        <VerticalListData
+          title="Tropes"
+          items={book.literaryTropes}
+          icon="check-circle"
         />
-      </View>
-      <VerticalListData
-        title="Frases favoritas"
-        items={book.quotes}
-        icon="bookmark"
-        columns={false}
-      />
-      <TextAreaView title="Sinopsis" content={book.sinopsis} />
-      <TextAreaView title="Reseña" content={book.review} />
+      }
+      {book.emotionRating &&
+        <RatingView type="emotion"
+          rating={book.emotionRating}
+          style={styles.ratingView}
+          styleIcon={styles.ratingEmotionIcon}
+        />
+      }
+      {book.characters &&
+        <HorizontalListData
+          title="Personajes favoritos"
+          items={book.characters}
+          renderItem={(character) => character}
+        />
+      }
+      {(book.spotifyLink || book.pinterestLink) &&
+        <View style={styles.rowContainer}>
+          <CustomButton
+            title={book.spotifyLink ? "Spotify" : "No existe"}
+            onPress={book.spotifyLink && (() => Linking.openURL(book.spotifyLink))}
+            icon={<FontAwesome5 name="spotify" size={22} color={colors.black} />}
+            style={[styles.link, styles.linkSpotify]}
+            styleContainer={styles.linkContainer}
+            styleText={styles.linkText}
+          />
+          <View style={styles.linkIcon}>
+            <AntDesign name="link" size={22} color={colors.white} />
+          </View>
+          <CustomButton
+            title={book.pinterestLink ? "Pinterest" : "No existe"}
+            onPress={book.pinterestLink && (() => Linking.openURL(book.pinterestLink))}
+            icon={<FontAwesome5 name="pinterest" size={22} color={colors.black} />}
+            style={[styles.link, styles.linkPinterest]}
+            styleContainer={styles.linkContainer}
+            styleText={styles.linkText}
+          />
+        </View>
+      }
+      {book.quotes &&
+        <VerticalListData
+          title="Frases favoritas"
+          items={book.quotes}
+          icon="bookmark"
+          columns={false}
+        />
+      }
+      {book.sinopsis && <TextAreaView title="Sinopsis" content={book.sinopsis} />}
+      {book.review && <TextAreaView title="Reseña" content={book.review} />}
     </ScrollView>
   )
 }
@@ -116,13 +130,12 @@ const styles = StyleSheet.create({
     width: "15%",
     margin: 0
   },
-  editDeleteBtn: {
-    backgroundColor: colors.darkGray
-  },
   deleteBtn: {
+    backgroundColor: colors.darkGray,
     alignSelf: "flex-end"
   },
   editBtn: {
+    backgroundColor: colors.skyBlue,
     alignSelf: "flex-start"
   },
   ratingView: {

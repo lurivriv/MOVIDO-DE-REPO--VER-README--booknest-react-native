@@ -1,16 +1,18 @@
 import { useState, useEffect } from "react"
 import { StyleSheet, View, ScrollView, Text, Modal, TouchableOpacity } from "react-native"
 import { colors } from "../../global/colors.js"
-import { useGetLiteraryTropesQuery } from "../../services/booksServices.js"
+import { useGetLiteraryTropesQuery } from "../../services/bookService.js"
+import { Loader } from "../Loader.jsx"
+import { Error } from "../Error.jsx"
 import { CustomButton } from "../CustomButton.jsx"
 
-export const TropesModal = ({ visible, onClose, literaryTropes, selectedTropes, setSelectedTropes }) => {
-  const [selectedTropesInModal, setSelectedTropesInModal] = useState(selectedTropes)
+export const TropesModal = ({ visible, onClose, selectedTropes, setSelectedTropes }) => {
+  const [selectedTropesInModal, setSelectedTropesInModal] = useState(selectedTropes || [])
   
-  const { data: tropes  = [] } = useGetLiteraryTropesQuery()
+  const { data: tropes = [], isLoading, isError } = useGetLiteraryTropesQuery()
 
   useEffect(() => {
-    setSelectedTropesInModal(selectedTropes)
+    setSelectedTropesInModal(selectedTropes || [])
   }, [selectedTropes])
 
   const handleTropeSelection = (trope) => {
@@ -30,13 +32,21 @@ export const TropesModal = ({ visible, onClose, literaryTropes, selectedTropes, 
     onClose()
   }
 
+  if (isLoading) {
+    return <Loader />
+  }
+
+  if (isError) {
+    return <Error message="Error al cargar los tropes" />
+  }
+
   return (
     <Modal visible={visible} transparent={true} onRequestClose={handleCancel}>
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
           <Text style={styles.modalTitle}>Selecciona los tropes</Text>
           <ScrollView showsVerticalScrollIndicator={false}>
-            {Array.isArray(tropes ) && tropes .map((trope, index) => (
+            {Array.isArray(tropes) && tropes?.map((trope, index) => (
               <TouchableOpacity
                 key={index}
                 onPress={() => handleTropeSelection(trope.name || trope)}

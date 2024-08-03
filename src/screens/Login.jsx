@@ -1,19 +1,58 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { StyleSheet, View, Text, Image } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 import { useDispatch } from "react-redux"
 import { colors } from "../global/colors.js"
 import { useSignInMutation } from "../services/authService.js"
 import { setUser } from "../features/User/UserSlice.js"
+import { loginSchema } from "../validations/sessionSchema.js"
 import { InputForm } from "../components/InputForm.jsx"
 import { CustomButton } from "../components/CustomButton.jsx"
 
 export const Login = ({ navigation }) => {
-  const [email, setEmail] = useState()
-  const [password, setPassword] = useState()
+  const [email, setEmail] = useState("")
+  const [errorMail, setErrorMail] = useState("")
+  const [password, setPassword] = useState("")
+  const [errorPassword, setErrorPassword] = useState("")
 
-  const onSubmit = ()=> {
-    //login
+  const [triggerSignIn, result] = useSignInMutation()
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    if (result.isSuccess) {
+      dispatch(
+        setUser({
+          email: result.data.email,
+          idToken: result.data.idToken,
+          localId: result.data.localId
+        })
+      )
+    }
+  }, [result])
+
+  const onSubmit = async () => {
+    try {
+      setErrorMail("")
+      setErrorPassword("")
+
+      loginSchema.validateSync({ email, password }, { abortEarly: false })
+      await triggerSignIn({ email, password, returnSecureToken: true })
+    } catch (error) {
+      if (error.inner) {
+        error.inner.forEach(err => {
+          switch (err.path) {
+            case "email":
+              setErrorMail(err.message)
+              break
+            case "password":
+              setErrorPassword(err.message)
+              break
+            default:
+              break
+          }
+        })
+      }
+    }
   }
 
   return (
@@ -24,15 +63,13 @@ export const Login = ({ navigation }) => {
         <View style={styles.formContainer}>
           <InputForm
             label={"Email"}
-            placeholder="email@gmail.com"
             onChange={setEmail}
-            error={""}
+            error={errorMail}
           />
           <InputForm
             label={"Contraseña"}
-            placeholder="••••••••••"
             onChange={setPassword}
-            error={""}
+            error={errorPassword}
             isSecure={true}
           />
           <CustomButton

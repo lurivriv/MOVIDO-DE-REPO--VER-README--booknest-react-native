@@ -1,11 +1,11 @@
 import { StyleSheet, View, Text, Pressable } from "react-native"
 import { AntDesign } from "@expo/vector-icons"
-import { colors } from "../global/colors.js"
-import { CustomButton } from "./CustomButton.jsx"
+import { colors } from "../../global/colors.js"
+import { CustomButton } from "../CustomButton.jsx"
 
 export const Titles = ({ title, onPress }) => {
   return (
-    <Pressable style={styles.titleContainer} onPress={onPress}>
+    <Pressable style={({ pressed }) => [styles.titleContainer, pressed && styles.pressedBtn]} onPress={onPress}>
       <View style={styles.titleContent}>
         <Text style={styles.titleText}>{title}</Text>
         <CustomButton
@@ -26,6 +26,9 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     borderBottomWidth: 1,
     borderBottomColor: colors.lightGray
+  },
+  pressedBtn: {
+    transform: [{ scale: 0.95 }]
   },
   titleContent: {
     width: "100%",

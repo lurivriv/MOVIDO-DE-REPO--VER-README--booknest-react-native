@@ -3,6 +3,7 @@ import { colors } from "../../global/colors.js"
 import { Books } from "../../screens/Books/Books.jsx"
 import { BookDetail } from "../../screens/Books/BookDetail.jsx"
 import { CustomBook } from "../../screens/Books/CustomBook.jsx"
+import { ImgSelector } from "../../screens/ImgSelector.jsx"
 
 const Stack = createNativeStackNavigator()
 
@@ -33,6 +34,11 @@ export const BooksStackNavigator = () => {
         name="CustomBook"
         component={CustomBook}
         options={({ route }) => ({ title: route.params?.bookId ? "Actualizar libro" : "Agregar libro" })}
+      />
+      <Stack.Screen
+        name="ImgSelector"
+        component={ImgSelector}
+        options={{ title: "Seleccionar imagen" }}
       />
     </Stack.Navigator>
   )

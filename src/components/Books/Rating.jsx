@@ -10,7 +10,7 @@ const emotions = [
   { type: "fun", iconFilled: "happy", iconOutline: "happy-outline", iconLib: Ionicons, color: colors.green }
 ]
 
-export const Rating = ({ type, rating, onRatingChange }) => {
+export const Rating = ({ type, rating, onRatingChange, error }) => {
   const handleRatingChange = (value, emotionType) => onRatingChange(emotionType || "star", value)
 
   return (
@@ -23,6 +23,7 @@ export const Rating = ({ type, rating, onRatingChange }) => {
               onChange={value => handleRatingChange(value, "star")}
               color={colors.yellow}
               starSize={40}
+              enableHalfStar={false}
             />
           </View>
         </>
@@ -50,6 +51,7 @@ export const Rating = ({ type, rating, onRatingChange }) => {
           ))}
         </>
       )}
+      {error ? <Text style={styles.error}>{error}</Text> : null}
     </View>
   )
 }
@@ -74,5 +76,13 @@ const styles = StyleSheet.create({
   },
   ratingBtn: {
     marginHorizontal: 12
+  },
+  error: {
+    fontFamily: "Roboto-regular-italic",
+    fontSize: 15,
+    marginTop: -6,
+    marginBottom: 16,
+    color: colors.red,
+    textAlign: "center"
   }
 })

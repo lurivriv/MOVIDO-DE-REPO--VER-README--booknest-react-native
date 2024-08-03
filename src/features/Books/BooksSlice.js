@@ -4,7 +4,8 @@ export const booksSlice = createSlice({
   name: "books",
   initialState: {
     value: [],
-    itemSelected: ""
+    itemSelected: "",
+    imageCameraBook: ""
   },
   reducers: {
     setBooks: (state, { payload }) => {
@@ -13,14 +14,21 @@ export const booksSlice = createSlice({
     setItemSelected: (state, { payload }) => {
       state.itemSelected = payload
     },
+    clearItemSelected: (state) => {
+      state.itemSelected = ""
+    },
+    setCameraImageBook: (state, { payload }) => {
+      const { bookId, image } = payload
+      state.value = state.value.map(book => book?.id === bookId ? imageCameraBook : image)
+    },
     addBook: (state, { payload }) => {
       state.value.push(payload)
     },
     updateBook: (state, { payload }) => {      
-      state.value = state.value.map(book => book.id === payload.id ? payload : book)
+      state.value = state.value.map(book => book?.id === payload.id ? payload : book)
     },
     removeBook: (state, { payload }) => {
-      state.value = state.value.filter(book => book.id !== payload)
+      state.value = state.value.filter(book => book?.id !== payload)
     }
   }
 })
@@ -28,6 +36,8 @@ export const booksSlice = createSlice({
 export const {
   setBooks,
   setItemSelected,
+  clearItemSelected,
+  setCameraImageBook,
   addBook,
   updateBook,
   removeBook

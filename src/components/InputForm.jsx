@@ -9,6 +9,7 @@ export const InputForm = ({
     placeholder="Escribe aquí",
     value = "",
     onChange,
+    onSubmit,
     rightElement = null ,
     multiline = false,
     textArea = "",
@@ -42,6 +43,7 @@ export const InputForm = ({
           placeholderTextColor={colors.lightGray}
           value={input}
           onChangeText={onChangeText}
+          onSubmitEditing={onSubmit}
           multiline={multiline}
           secureTextEntry={isSecure}
           ref={inputRef}
@@ -95,12 +97,12 @@ const styles = StyleSheet.create({
   sinopsisInput: {
     height: 150,
     paddingVertical: 12,
-    textAlignVertical: "top"
+    verticalAlign: "top"
   },
   reviewInput: {
     height: 300,
     paddingVertical: 12,
-    textAlignVertical: "top"
+    verticalAlign: "top"
   },
   rightElementContainer: {
     position: "absolute",
@@ -111,7 +113,8 @@ const styles = StyleSheet.create({
   error: {
     fontFamily: "Roboto-regular-italic",
     fontSize: 15,
-    marginTop: 3,
+    marginTop: -6,
+    marginBottom: 16,
     color: colors.red
   }
 })

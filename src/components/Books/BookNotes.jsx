@@ -6,7 +6,7 @@ import { colors } from "../../global/colors.js"
 import { InputForm } from "../InputForm.jsx"
 import { CustomButton } from "../CustomButton.jsx"
 
-export const BookNotes = ({ label, items, setItems }) => {
+export const BookNotes = ({ label, items, setItems, error }) => {
   const [inputValue, setInputValue] = useState("")
 
   const handleAddItem = () => {
@@ -19,6 +19,7 @@ export const BookNotes = ({ label, items, setItems }) => {
   const handleDeleteItem = (item) => {
     const updatedItems = items.filter(i => i !== item)
     setItems(updatedItems)
+    
     Toast.show({
       type: "info",
       text1: `" ${item} "  ha sido eliminado`,
@@ -58,6 +59,7 @@ export const BookNotes = ({ label, items, setItems }) => {
           </ScrollView>
         )}
       </View>
+      {error ? <Text style={styles.error}>{error}</Text> : null}
     </View>
   )
 }
@@ -105,5 +107,13 @@ const styles = StyleSheet.create({
   toastText1: {
     fontSize: 17,
     color: colors.darkGray
+  },
+  error: {
+    fontFamily: "Roboto-regular-italic",
+    fontSize: 15,
+    marginTop: -6,
+    marginBottom: 16,
+    color: colors.red,
+    textAlign: "center"
   }
 })

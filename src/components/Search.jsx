@@ -1,14 +1,22 @@
-import { useState, useCallback } from "react"
-import { StyleSheet, View, Text } from "react-native"
+import { useState, useEffect, useCallback } from "react"
+import { StyleSheet, View } from "react-native"
 import { FontAwesome5, Entypo } from "@expo/vector-icons"
 import { colors } from "../global/colors.js"
 import { InputForm } from "./InputForm.jsx"
 import { CustomButton } from "./CustomButton.jsx"
 
-export const Search = ({ onSearch = () => {}, onClear = () => {}, error = "" }) => {
+export const Search = ({ onSearch = () => {}, onClear = () => {} }) => {
   const [keyword, setKeyword] = useState("")
 
-  const handleSearch = useCallback(() => {
+  useEffect(() => {
+    if (keyword.trim() !== "") {
+      onSearch(keyword)
+    } else {
+      onClear()
+    }
+  }, [keyword, onSearch, onClear])
+
+  const handleSubmitEditing = useCallback(() => {
     onSearch(keyword)
   }, [keyword, onSearch])
   
@@ -17,30 +25,32 @@ export const Search = ({ onSearch = () => {}, onClear = () => {}, error = "" }) 
     onClear()
   }, [onClear])
 
+  const handleChange = useCallback((text) => {
+    setKeyword(text)
+  }, [])
+
   return (
     <View style={styles.container}>
       <InputForm
         placeholder="Buscar..."
         value={keyword}
-        onChange={setKeyword}
-        error={error}
+        onChange={handleChange}
+        onSubmit={handleSubmitEditing}
         rightElement={
           <CustomButton
             onPress={handleClear}
             icon={<Entypo name="cross" size={27} color={colors.skyBlue} />}
             style={styles.iconBtnInput}
-            styleText={styles.btnTextInput}
           />
         }
         style={styles.inputContainer}
         styleInput={styles.input}
       />
       <CustomButton
-        onPress={handleSearch}
+        onPress={() => onSearch(keyword)}
         icon={<FontAwesome5 name="search" size={20} color={colors.black} />}
         style={styles.iconBtn}
         styleContainer={styles.iconBtnContainer}
-        styleText={styles.btnText}
       />
     </View>
   )
@@ -67,7 +77,11 @@ const styles = StyleSheet.create({
     margin: 0
   },
   iconBtnInput: {
-    backgroundColor: "rgba(25, 25, 25, 0)"
+    height: "90%",
+    marginRight: 10,
+    padding: 6,
+    paddingLeft: 4,
+    backgroundColor: colors.black
   },
   iconBtn: {
     backgroundColor: colors.skyBlue

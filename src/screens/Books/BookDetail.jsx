@@ -1,21 +1,28 @@
+import { useEffect } from "react"
 import { StyleSheet, View } from "react-native"
 import { useDispatch } from "react-redux"
 import Toast from "react-native-toast-message"
 import { colors } from "../../global/colors.js"
-import { useGetBookByIdQuery, useDeleteBookMutation } from "../../services/booksServices.js"
-import { removeBook } from "../../features/Books/BooksSlice.js"
+import { useGetBookByIdQuery, useDeleteBookMutation } from "../../services/bookService.js"
+import { clearItemSelected, removeBook } from "../../features/Books/BooksSlice.js"
 import { Loader } from "../../components/Loader.jsx"
 import { Error } from "../../components/Error.jsx"
 import { BookInfo } from "../../components/Books/BookInfo.jsx"
 
 export const BookDetail = ({ navigation, route }) => {
   const { bookId } = route.params
-  const { data: book = [], isLoading, error } = useGetBookByIdQuery(bookId)
+  const { data: book = [], isLoading, isError } = useGetBookByIdQuery(bookId)
   const [deleteBook] = useDeleteBookMutation()
   const dispatch = useDispatch()
 
+  useEffect(() => {
+    const removeItemSelected = navigation.addListener("beforeRemove", () => dispatch(clearItemSelected()))
+    return removeItemSelected
+  }, [navigation, dispatch])
+
   const handleDelete = async () => {
     await deleteBook(bookId)
+
     Toast.show({
       type: "info",
       text1: `" ${book.title} "  ha sido eliminado`,
@@ -23,6 +30,7 @@ export const BookDetail = ({ navigation, route }) => {
       position: "bottom",
       bottomOffset: 72
     })
+    
     dispatch(removeBook(bookId))
     navigation.goBack()
   }
@@ -35,8 +43,8 @@ export const BookDetail = ({ navigation, route }) => {
     return <Loader />
   }
 
-  if (error || !book) {
-    return <Error message="Error al cargar los datos" />
+  if (isError) {
+    return <Error message="Error al cargar el libro" />
   }
 
   return (
@@ -45,6 +53,7 @@ export const BookDetail = ({ navigation, route }) => {
         book={book}
         onEdit={handleEdit}
         onDelete={handleDelete}
+        bookId={bookId}
       />
     </View>
   )

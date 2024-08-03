@@ -13,7 +13,7 @@ export const SingleDataView = ({ value, text, format, genre, simpleView = false 
 
   return (
     <>
-      {value ? (
+      {(value || text != null) ? (
         <View style={styles.row}>
           <View style={styles.chaptersPages}>
             <Text style={styles.chaptersPagesText}>{value} {text}</Text>

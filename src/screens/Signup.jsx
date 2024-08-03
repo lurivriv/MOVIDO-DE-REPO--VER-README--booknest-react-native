@@ -3,9 +3,10 @@ import { StyleSheet, View, Text, Image } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 import { useDispatch } from "react-redux"
 import { colors } from "../global/colors.js"
+import Toast from "react-native-toast-message"
 import { useSignUpMutation } from "../services/authService.js"
 import { setUser } from "../features/User/UserSlice.js"
-// import { signupSchema } from "../validation/authSchema"
+import { signupSchema } from "../validations/sessionSchema.js"
 import { InputForm } from "../components/InputForm.jsx"
 import { CustomButton } from "../components/CustomButton.jsx"
 
@@ -25,14 +26,50 @@ export const Signup = ({ navigation }) => {
       dispatch(
         setUser({
           email: result.data.email,
-          idToken: result.data.idToken
+          idToken: result.data.idToken,
+          localId: result.data.localId
         })
       )
     }
   }, [result])
+  
+  const onSubmit = async () => {
+    try {
+      setErrorMail("")
+      setErrorPassword("")
+      setErrorConfirmPassword("")
 
-  const onSubmit = () => {
-    triggerSignUp({ email, password, returnSecureToken: true })
+      signupSchema.validateSync({ email, password, confirmPassword }, { abortEarly: false })
+      await triggerSignUp({ email, password, returnSecureToken: true })
+
+      navigation.navigate("Login")
+      
+      Toast.show({
+        type: "info",
+        text1: "La cuenta fue creada con éxito",
+        text1Style: styles.toastText1,
+        position: "bottom",
+        bottomOffset: 72
+      })
+    } catch (error) {
+      if (error.inner) {
+        error.inner.forEach(err => {
+          switch (err.path) {
+            case "email":
+              setErrorMail(err.message)
+              break
+            case "password":
+              setErrorPassword(err.message)
+              break
+            case "confirmPassword":
+              setErrorConfirmPassword(err.message)
+              break
+            default:
+              break
+          }
+        })
+      }
+    }
   }
 
   return (
@@ -43,20 +80,17 @@ export const Signup = ({ navigation }) => {
         <View style={styles.formContainer}>
           <InputForm
             label={"Email"}
-            placeholder="email@gmail.com"
             onChange={setEmail}
             error={errorMail}
           />
           <InputForm
             label={"Contraseña"}
-            placeholder="••••••••••"
             onChange={setPassword}
             error={errorPassword}
             isSecure={true}
           />
           <InputForm
             label={"Confirmar contraseña"}
-            placeholder="••••••••••"
             onChange={setconfirmPassword}
             error={errorConfirmPassword}
             isSecure={true}
@@ -140,5 +174,9 @@ const styles = StyleSheet.create({
   subLoginBtnText: {
     color: colors.skyBlue,
     textDecorationLine: "underline"
+  },
+  toastText1: {
+    fontSize: 17,
+    color: colors.darkGray
   }
 })

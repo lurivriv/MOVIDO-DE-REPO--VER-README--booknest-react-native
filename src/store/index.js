@@ -3,7 +3,7 @@ import { setupListeners } from "@reduxjs/toolkit/query"
 import authReducer from "../features/User/UserSlice.js"
 import booksReducer from "../features/Books/BooksSlice.js"
 import { authApi } from "../services/authService.js"
-import { bookApi } from "../services/booksServices.js"
+import { bookApi } from "../services/bookService.js"
 
 const store = configureStore({
   reducer: {
@@ -14,7 +14,9 @@ const store = configureStore({
     [bookApi.reducerPath]: bookApi.reducer
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware()
+    getDefaultMiddleware({
+      serializableCheck: false
+    })
       .concat(authApi.middleware)
       .concat(bookApi.middleware)
 })

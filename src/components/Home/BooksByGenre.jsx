@@ -1,9 +1,9 @@
 import { View } from "react-native"
-import { useGetBooksQuery } from "../../services/booksServices.js"
+import { useGetBooksByUserQuery } from "../../services/bookService.js"
 import { ScrollHorizontalBooksList } from "./ScrollHorizontalBooksList.jsx"
 
 export const BooksByGenre = ({ navigation }) => {
-  const { data: books = [] } = useGetBooksQuery()
+  const { data: books = [] } = useGetBooksByUserQuery("lu@gmail.com")
 
   const filterBooksByGenre = books.reduce((acc, book) => {
     (book.genres || []).forEach(genre => {
@@ -22,7 +22,7 @@ export const BooksByGenre = ({ navigation }) => {
   const handleBooksByGenreList = (genre) => {
     navigation.navigate("BooksByGenreList", { genre })
   }
-
+  
   return (
     <View>
       {sortedBooksByGenre.map(([genre, { books }]) => (

@@ -1,6 +1,6 @@
 import { StyleSheet, View, ScrollView } from "react-native"
 import { colors } from "../../global/colors.js"
-import { Titles } from "../../components/Titles.jsx"
+import { Titles } from "../../components/Home/Titles.jsx"
 import { BooksList } from "../Books/BooksList.jsx"
 import { FavoriteBooks } from "../../components/Home/FavoriteBooks.jsx"
 import { BooksByGenre } from "../../components/Home/BooksByGenre.jsx"
@@ -9,7 +9,7 @@ export const Home = ({ navigation }) => {
   const navigateToBooks = () => {
     navigation.reset({
       index: 0,
-      routes: [{ name: "Books" }]
+      routes: [{ name: "BooksBtn" }]
     })
   }
 

@@ -1,40 +1,56 @@
 import { useState, useEffect, useCallback } from "react"
-import { StyleSheet, View, ScrollView } from "react-native"
+import { StyleSheet, View, ScrollView, Text } from "react-native"
 import { FontAwesome6 } from "@expo/vector-icons"
 import { colors } from "../../global/colors.js"
-import { useGetBooksQuery } from "../../services/booksServices.js"
-import { CustomButton } from "../../components/CustomButton.jsx"
-import { Search } from "../../components/Search.jsx"
+import { useGetBooksByUserQuery } from "../../services/bookService.js"
 import { BooksList } from "./BooksList.jsx"
+import { Search } from "../../components/Search.jsx"
+import { CustomButton } from "../../components/CustomButton.jsx"
 
 export const Books = ({ navigation }) => {
   const [keyword, setKeyword] = useState("")
-  const [booksSearched, setBooksSearched] = useState([])
+  const [result, setResult] = useState("")
   const [error, setError] = useState("")
-  const [allBooks, setAllBooks] = useState([])
 
-  const { data: books = [], isLoading } = useGetBooksQuery()
+  const { data: books = [], isLoading } = useGetBooksByUserQuery("lu@gmail.com")
 
-  useEffect(() => {
-    setAllBooks(books)
-
+  useEffect(() => {  
     if (!isLoading) {
-      const filteredBooks = books.filter(book => book.title?.toLowerCase().includes(keyword.toLowerCase()))
-      setBooksSearched(filteredBooks)
-      setError("")
+      if (keyword.trim()) {
+      
+        const filteredBooks = books.filter(book => 
+          book.title?.toLowerCase().includes(keyword.toLowerCase()) ||
+          book.author?.toLowerCase().includes(keyword.toLowerCase()) ||
+          book.serie?.toLowerCase().includes(keyword.toLowerCase()) ||
+          (book.genres?.some(genre => genre.toLowerCase().includes(keyword.toLowerCase()))) ||
+          book.readingFormat?.toLowerCase().includes(keyword.toLowerCase()) ||
+          (book.starRating?.toString() === keyword)
+        )
+
+        if (filteredBooks.length > 0) {
+          setResult("Resultados de búsqueda")
+          setError("")
+        } else {
+          setResult("")
+          setError("No hay resultados para esta búsqueda")
+        }
+      }
     }
   }, [keyword, books, isLoading])
 
   const handleClearSearch = useCallback(() => {
-    setBooksSearched(allBooks)
+    setKeyword("")
+    setResult("")
     setError("")
-  }, [allBooks])
+  }, [])
   
   return (
     <View style={styles.container}>
-      <Search error={error} onSearch={setKeyword} onClear={handleClearSearch} />
+      <Search onSearch={setKeyword} onClear={handleClearSearch} />
+      {error && <Text style={styles.error}>{error}</Text>}
       <ScrollView contentContainerStyle={styles.scrollViewContent} showsVerticalScrollIndicator={false}>
-        <BooksList navigation={navigation} books={booksSearched} />
+        {result && <Text style={styles.result}>{result}</Text>}
+        <BooksList navigation={navigation} searchResults={keyword} />
       </ScrollView>
       <CustomButton
         title="Agregar libro"
@@ -73,5 +89,19 @@ const styles = StyleSheet.create({
   },
   addBookBtnText: {
     marginRight: 16
+  },
+  result: {
+    fontFamily: "Roboto-regular-italic",
+    fontSize: 15,
+    marginBottom: 14,
+    color: colors.white,
+    textAlign: "center"
+  }, 
+  error: {
+    fontFamily: "Roboto-regular-italic",
+    fontSize: 15,
+    marginBottom: 16,
+    color: colors.red,
+    textAlign: "center"
   }
 })

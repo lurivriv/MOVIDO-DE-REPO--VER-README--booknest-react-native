@@ -7,11 +7,9 @@ import { colors } from "./src/global/colors.js"
 import { Navigator } from "./src/navigation/Navigator.jsx"
 
 export default function App() {
-  // Status Bar
   StatusBar.setBackgroundColor(colors.black)
   StatusBar.setBarStyle("light-content")
 
-  // Fuente  
   const [fontsLoaded, fontError] = useFonts({
     "Roboto-regular": require("./assets/fonts/Roboto-Regular.ttf"),
     "Roboto-regular-italic": require("./assets/fonts/Roboto-Italic.ttf"),
@@ -27,7 +25,7 @@ export default function App() {
       <Provider store={store}>
         <Navigator />
       </Provider>
-      <Toast ref={(ref) => Toast.setRef(ref)} />
+      <Toast />
     </SafeAreaView>
   )
 }

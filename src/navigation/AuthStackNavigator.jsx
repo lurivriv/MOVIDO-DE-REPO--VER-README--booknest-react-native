@@ -15,10 +15,12 @@ export const AuthStackNavigator = () => {
       <Stack.Screen
         component={Login}
         name="Login"
+        options={{ title: "Iniciar sesión" }}
       />
       <Stack.Screen
         component={Signup}
         name="Signup"
+        options={{ title: "Crear cuenta" }}
       />
     </Stack.Navigator>
   )

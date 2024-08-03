@@ -3,26 +3,26 @@ import { useDispatch } from "react-redux"
 import Toast from "react-native-toast-message"
 import { AntDesign } from "@expo/vector-icons"
 import { colors } from "../../global/colors.js"
-import { useDeleteBookMutation } from "../../services/booksServices.js"
+import { useDeleteBookMutation } from "../../services/bookService.js"
 import { setItemSelected, removeBook } from "../../features/Books/BooksSlice.js"
 import { CustomButton } from "../CustomButton.jsx"
 import { BookImg } from "./View/BookImg.jsx"
 import { RatingView } from "./View/RatingView.jsx"
 import { SingleDataView } from "./View/SingleDataView.jsx"
 
-export const BookItem = ({ book, navigation, simpleView = false, isFirstItem, isLastItem }) => {
+export const BookItem = ({ navigation, book, simpleView = false, isFirstItem, isLastItem }) => {
   const [deleteBook] = useDeleteBookMutation()
   const dispatch = useDispatch()
-
-  const image = require("../../../assets/books/defaultImg.jpg")
+  const bookId = book.id
 
   const handleNavigate = () => {
     dispatch(setItemSelected(book.id))
     navigation.navigate("BookDetail", { bookId: book.id })
   }
-  
+
   const handleDelete = async () => {
     await deleteBook(book.id)
+
     Toast.show({
       type: "info",
       text1: `" ${book.title} "  ha sido eliminado`,
@@ -30,6 +30,7 @@ export const BookItem = ({ book, navigation, simpleView = false, isFirstItem, is
       position: "bottom",
       bottomOffset: 72
     })
+
     dispatch(removeBook(book.id))
   }
 
@@ -37,8 +38,8 @@ export const BookItem = ({ book, navigation, simpleView = false, isFirstItem, is
     <>
       {!simpleView && (
         <View style={styles.cardContainer}>
-          <Pressable style={styles.detailsContainer} onPress={handleNavigate}>
-            <BookImg source={image} style={styles.imgContainer} imgStyle={styles.img} />
+          <Pressable style={({ pressed }) => [styles.detailsContainer, pressed && styles.pressedBtn]} onPress={handleNavigate}>
+            <BookImg bookId={bookId} backgroundSource={false} style={styles.imgContainer} imgStyle={styles.img} />
             <View style={styles.details}>
               <Text style={styles.title}>{book.title}</Text>
               {book.serie && <Text style={styles.serie}>{book.serie}</Text>}
@@ -76,8 +77,8 @@ export const BookItem = ({ book, navigation, simpleView = false, isFirstItem, is
             isLastItem && { paddingRight: 0, borderTopRightRadius: 10, borderBottomRightRadius: 10 }
           ]}
         >
-          <Pressable style={styles.simpleViewDetails} onPress={handleNavigate}>
-            <BookImg source={image} imgStyle={styles.img} />
+          <Pressable style={({ pressed }) => [styles.simpleViewDetails, pressed && styles.pressedBtn]} onPress={handleNavigate}>
+            <BookImg bookId={bookId} backgroundSource={false} imgStyle={styles.img} />
             <RatingView
               type="star"
               rating={book.starRating}
@@ -106,12 +107,16 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row"
   },
+  pressedBtn: {
+    transform: [{ scale: 0.95 }]
+  },
   imgContainer: {
     marginRight: 10
   },
   img: {
     height: 150,
-    aspectRatio: 164 / 250
+    aspectRatio: 164 / 250,
+    borderWidth: 0
   },
   details: {
     flex: 1,

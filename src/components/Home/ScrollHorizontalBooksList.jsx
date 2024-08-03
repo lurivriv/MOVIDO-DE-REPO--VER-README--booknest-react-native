@@ -1,6 +1,6 @@
 import { StyleSheet, View, ScrollView, Text } from "react-native"
 import { colors } from "../../global/colors.js"
-import { Titles } from "../Titles.jsx"
+import { Titles } from "../Home/Titles.jsx"
 import { BookItem } from "../Books/BookItem.jsx"
 
 export const ScrollHorizontalBooksList = ({ navigation, title, noBooksText, data, onPress }) => {
